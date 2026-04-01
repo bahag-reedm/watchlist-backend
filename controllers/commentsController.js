@@ -71,3 +71,69 @@ export const addCommentAndRating = async (req, res) => {
     });
   }
 };
+
+
+export const getCommentsAndRatingsForMovie = async (req, res) => {
+  try {
+    const movieId = parseInt(req.params.movieId, 10);
+
+    if (!(movieId)) {
+      return res.status(400).json({
+        success: false,
+        message: "movieId must be a valid integer",
+      });
+    }
+
+    const comments = await Comments.findAll({
+      where: { movie_id: movieId },
+      include: [{ model: Users, attributes: ['username'] }]
+    });
+
+    return res.status(200).json({
+      success: true,
+      data: comments,
+    });
+  } catch (error) {
+    console.error("Get comments error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Internal server error",
+    });
+  }
+};
+
+export const deleteCommentAndRating = async (req, res) => {
+  try {
+    const commentId = parseInt(req.params.commentId, 10);
+
+    if (!(commentId)) {
+      return res.status(400).json({
+        success: false,
+        message: "commentId must be a valid integer",
+      });
+    }
+
+    const comment = await Comments.findByPk(commentId);
+    if (!comment) {
+      return res.status(404).json({
+        success: false,
+        message: "Comment not found",
+      });
+    }
+
+    await comment.destroy();
+
+    return res.status(200).json({
+      success: true,
+      message: "Comment deleted successfully",
+    });
+  } catch (error) {
+    console.error("Delete comment error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Internal server error",
+    });
+  }
+};
