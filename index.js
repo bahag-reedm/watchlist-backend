@@ -10,7 +10,7 @@ import {applyAssociations} from "./models/associations.js";
 import commentsRoutes from "./routes/commentsRoutes.js";
 
 const app = express();
-const PORT  = process.env.PORT || 3000;
+const PORT  = process.env.PORT || 8080;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -18,7 +18,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use("/api", authRoutes, moviesRoutes, watchlistsRoutes, commentsRoutes);
 
 
-app.listen(PORT, async () => {
+app.listen(PORT, "0.0.0.0", async () => {
   console.log(`server is listening on PORT ${PORT}`)
   try {
     await sequelize.authenticate()
